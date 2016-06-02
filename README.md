@@ -1,7 +1,6 @@
 # Jelastic Joomla Add-on
 
 This repository provides [Joomla](http://www.joomla.org/) add-on for Jelastic Platform.
-[![GET IT HOSTED](https://raw.githubusercontent.com/JelasticJPS/Joomla/master/images/getithosted.png)](http://go.jelastic.com/test?hoster-select=1&theme=modern&app=https://raw.githubusercontent.com/JelasticJPS/Joomla/master/Joomla-3.4.8.json)
 
 
 **Joomla** is an award-winning content management system (CMS), which enables you to build Web sites and powerful online applications.
