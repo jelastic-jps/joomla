@@ -1,3 +1,4 @@
+[![Joomla](../../raw/master/images/joomla.png)](../../../Joomla)
 ## Joomla
 
 The JPS package deploys Joomla that initially contains 1 application server and 1 database container. The package provides vertical scalling per node and horizontal scaling for each layer out-of-the-box.
