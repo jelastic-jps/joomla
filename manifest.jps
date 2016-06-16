@@ -5,7 +5,7 @@
 		"id": "joomla",
 		"name": "Joomla",
 		"version": "3.4.8",
-		"logo": "https://raw.githubusercontent.com/jelastic-jps/Joomla/master/images/joomla.png",
+		"logo": "https://raw.githubusercontent.com/jelastic-jps/joomla/master/images/joomla.png",
 		"type": "php",
 		"categories": ["apps/cms"],
 		"homepage": "http://www.joomla.org/",
@@ -31,7 +31,7 @@
 				]
 			},
 			"deployments": [{
-					"archive": "https://raw.githubusercontent.com/jelastic-jps/Joomla/master/dumps/joom348.zip",
+					"archive": "https://raw.githubusercontent.com/jelastic-jps/joomla/master/dumps/joom348.zip",
 					"name": "Joomla-3.4.8.zip",
 					"context": "ROOT"
 				}
@@ -41,7 +41,7 @@
 					"database": {
 						"name": "joomla",
 						"user": "joomla",
-						"dump": "https://raw.githubusercontent.com/jelastic-jps/Joomla/master/dumps/joomla.sql",
+						"dump": "https://raw.githubusercontent.com/jelastic-jps/joomla/master/dumps/joomla.sql",
 						"patch": "UPDATE joomla.pby9p_users SET email='${user.email}' WHERE username='admin';UPDATE joomla.pby9p_users SET password=MD5('${user.appPassword}') WHERE username='admin';"
 					}
 				}, {
