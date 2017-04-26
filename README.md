@@ -8,7 +8,7 @@ This package is designed to deploy Joomla environment which enables to build Web
 
 ### Environment Topology
 
-![Joomla Topology](https://docs.google.com/drawings/d/1569ghASdGRjzpd1D7qlTaxGgovq6EEmUsRj-U_eXoeE/pub?w=505&h=216)
+![joomla-environment-topology](images/joomla-environment-topology.png)
 
 ### Specifics
 
