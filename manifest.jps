@@ -7,7 +7,7 @@
 		"version": "3.4.8",
 		"logo": "https://raw.githubusercontent.com/jelastic-jps/joomla/master/images/joomla.png",
 		"type": "php",
-		"categories": ["apps/cms"],
+		"categories": ["apps/cms","apps/content-management"],
 		"homepage": "http://www.joomla.org/",
 		"description": {
 			"en": "Joomla is an award-winning content management system (CMS), which enables you to build Web sites and powerful online applications."
@@ -20,13 +20,13 @@
 				"nodes": [{
 						"extip": false,
 						"count": 1,
-						"cloudlets": 16,
+						"cloudlets": 8,
 						"nodeType": "apache2"
 					}, {
 						"nodeType": "mysql5",
 						"extip": false,
 						"count": 1,
-						"cloudlets": 16
+						"cloudlets": 8
 					}
 				]
 			},
