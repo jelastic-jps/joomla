@@ -62,6 +62,15 @@
 						}
 					]
 				}, {
+					"nodeType": "mysql5",
+					"path": "/etc/my.cnf",
+					"restart": true,
+					"replacements": [{
+							"pattern": "\\[mysqld\\]",
+							"replacement": "\\[mysqld\\]\ncharacter-set-server=utf8"
+						}
+					]
+				}, {
 					"nodeMission": "cp",
 					"path": "${SYSTEM_ETC}/php.ini",
 					"replacements": [{
