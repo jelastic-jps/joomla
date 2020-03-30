@@ -1,90 +1,74 @@
-{
-	"jpsVersion": "0.2",
-	"jpsType": "install",
-	"application": {
-		"id": "joomla",
-		"name": "Joomla",
-		"version": "3.4.8",
-		"logo": "https://raw.githubusercontent.com/jelastic-jps/joomla/master/images/joomla.png",
-		"type": "php",
-		"categories": ["apps/cms","apps/content-management"],
-		"homepage": "http://www.joomla.org/",
-		"description": {
-			"en": "Joomla is an award-winning content management system (CMS), which enables you to build Web sites and powerful online applications."
-		},
-		"env": {
-			"topology": {
-				"ha": false,
-				"engine": "php5.4",
-				"ssl": false,
-				"nodes": [{
-						"extip": false,
-						"count": 1,
-						"cloudlets": 8,
-						"nodeType": "apache2"
-					}, {
-						"nodeType": "mysql5",
-						"extip": false,
-						"count": 1,
-						"cloudlets": 8
-					}
-				]
-			},
-			"deployments": [{
-					"archive": "https://raw.githubusercontent.com/jelastic-jps/joomla/master/dumps/joom348.zip",
-					"name": "Joomla-3.4.8.zip",
-					"context": "ROOT"
-				}
-			],
-			"configs": [{
-					"nodeType": "mysql5",
-					"database": {
-						"name": "joomla",
-						"user": "joomla",
-						"dump": "https://raw.githubusercontent.com/jelastic-jps/joomla/master/dumps/joomla.sql",
-						"patch": "UPDATE joomla.pby9p_users SET email='${user.email}' WHERE username='admin';UPDATE joomla.pby9p_users SET password=MD5('${user.appPassword}') WHERE username='admin';"
-					}
-				}, {
-					"nodeType": "apache2",
-					"path": "/var/www/webroot/ROOT/configuration.php",
-					"replacements": [{
-							"pattern": "{DB_HOST}",
-							"replacement": "${nodes.mysql5.address}"
-						}, {
-							"pattern": "{DB_USER}",
-							"replacement": "${nodes.mysql5.database.user}"
-						}, {
-							"pattern": "{DB_PASSWORD}",
-							"replacement": "${nodes.mysql5.database.password}"
-						}, {
-							"pattern": "{DB_NAME}",
-							"replacement": "${nodes.mysql5.database.name}"
-						}
-					]
-				}, {
-					"nodeType": "mysql5",
-					"path": "/etc/my.cnf",
-					"restart": true,
-					"replacements": [{
-							"pattern": "\\[mysqld\\]",
-							"replacement": "\\[mysqld\\]\ncharacter-set-server=utf8"
-						}
-					]
-				}, {
-					"nodeMission": "cp",
-					"path": "${SYSTEM_ETC}/php.ini",
-					"replacements": [{
-							"pattern": ".*extension=mysql.so",
-							"replacement": "extension=mysql.so"
-						}
-					],
-					"restart": true
-				}
-			]
-		},
-		"success": {
-			"text": "Below you will find your admin panel link, adminname and password.</br></br> <table style='font-size:13px; border: none;'><tr><td width=\"70px\">Admin URL:</td><td style='padding-left: 10px;'><a href='${env.protocol}://${env.domain}/administrator/' target='_blank'>${env.protocol}://${env.domain}/administrator/</a></td></tr>  <tr><td>Admin name:</td><td style='padding-left: 10px;'>admin</td></tr><tr><td>Password:</td><td style='padding-left: 10px;'>${user.appPassword}</td></tr></table></br>To add custom domain name for your Joomla installation follow the steps described in our <a href='http://docs.jelastic.com/custom-domains' target='_blank'>documentation</a>",
-			"email": "Below you will find your admin panel link, adminname and password.</br></br> <table style='font-size:13px; border: none;'><tr><td width=\"70px\">Admin URL:</td><td style='padding-left: 10px;'><a href='${env.protocol}://${env.domain}/administrator/' target='_blank'>${env.protocol}://${env.domain}/administrator/</a></td></tr>  <tr><td>Admin name:</td><td style='padding-left: 10px;'>admin</td></tr><tr><td>Password:</td><td style='padding-left: 10px;'>${user.appPassword}</td></tr></table></br>To add custom domain name for your Joomla installation follow the steps described in our <a href='http://docs.jelastic.com/custom-domains' target='_blank'>documentation</a>"
-		}
-	}
-}
+version: '0.2'
+type: install
+id: joomla
+name: Joomla
+logo: https://raw.githubusercontent.com/jelastic-jps/joomla/master/images/joomla.png
+categories:
+- apps/cms
+- apps/content-management
+homepage: http://www.joomla.org/
+description: Joomla is an award-winning content management system (CMS), which enables
+  you to build Web sites and powerful online applications.
+engine: php7.3
+globals:
+  DB_ADMIN_PASS: "${fn.password}"
+  ADMIN_PASS: "${user.appPassword}"
+nodes:
+- cloudlets: 8
+  nodeType: apache2
+- nodeType: mysql5
+  cloudlets: 8
+onInstall:
+- deploy:
+    archive: https://github.com/jelastic-jps/joomla/blob/master/dumps/joomla-3.9.5.zip?raw=true
+    name: Joomla-3.9.5.zip
+    context: ROOT
+- prepareSqlDatabase:
+    nodeGroup: sqldb
+    loginCredentials:
+      user: root
+      password: "${nodes.sqldb.password}"
+    newDatabaseName: joomla
+    newDatabaseUser:
+      name: joomla
+      password: "${globals.DB_ADMIN_PASS}"
+- restoreSqlDump:
+    nodeGroup: sqldb
+    databaseName: joomla
+    user: joomla
+    password: "${globals.DB_ADMIN_PASS}"
+    dump: https://raw.githubusercontent.com/jelastic-jps/joomla/master/dumps/joomla.sql
+- applySqlPatch:
+    nodeGroup: sqldb
+    databaseName: joomla
+    user: joomla
+    password: "${globals.DB_ADMIN_PASS}"
+    patch: UPDATE joomla.pby9p_users SET username='admin' WHERE username='jelastic';UPDATE joomla.pby9p_users SET email='${user.email}' WHERE username='admin';UPDATE joomla.pby9p_users SET password=MD5('${globals.ADMIN_PASS}') WHERE username='admin';
+- replaceInFile:
+  - nodeType: apache2
+    path: "/var/www/webroot/ROOT/configuration.php"
+    replacements:
+    - pattern: "{DB_HOST}"
+      replacement: "${nodes.mysql5.address}"
+    - pattern: "{USER_EMAIL}"
+      replacement: "${user.email}"
+    - pattern: "{DB_USER}"
+      replacement: joomla
+    - pattern: "{DB_PASSWORD}"
+      replacement: "${globals.DB_ADMIN_PASS}"
+    - pattern: "{DB_NAME}"
+      replacement: joomla
+  - nodeType: apache2
+    path: "${SYSTEM_ETC}/php.ini"
+    replacements:
+    - pattern: ".*extension=mysql.so"
+      replacement: extension=mysql.so
+- cmd [sqldb]: sed -i "s|\[mysqld\]|\[mysqld\]\ncharacter-set-server=utf8|g" /etc/my.cnf
+  user: root
+- restartNodes [apache2]
+success: |
+  Below you will find your admin panel link, adminname and password.  
+  Admin URL: [${env.protocol}://${env.domain}/administrator/](${env.protocol}://${env.domain}/administrator/)  
+  Admin name: admin  
+  Password: ${globals.ADMIN_PASS}  
+  To add custom domain name for your Joomla installation follow the steps described in our [documentation](http://docs.jelastic.com/custom-domains)
