@@ -1,4 +1,4 @@
-version: '0.2'
+version: 1.7
 type: install
 id: joomla
 name: Joomla
