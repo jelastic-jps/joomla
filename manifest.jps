@@ -44,7 +44,7 @@ onInstall:
     composer global require joomlatools/console
     export PATH="$PATH:$HOME/.config/composer/vendor/bin"
     mysql -uroot -p${nodes.sqldb.password} -h${nodes.mysql5.address} -e "DROP database joomla"
-    joomla site:create Jelastic --www=${globals.ROOT_PATH} --use-webroot-dir --mysql-database=joomla --mysql-login=joomla:${globals.DB_ADMIN_PASS} --mysql-host=${nodes.mysql5.address} --release=${globals.version_joomla}
+    joomla site:create Jelastic --www=${globals.ROOT_PATH} --use-webroot-dir --mysql-database=joomla --mysql-login='joomla:${globals.DB_ADMIN_PASS}' --mysql-host=${nodes.mysql5.address} --release=${globals.version_joomla}
 - replaceInFile:
   - nodeType: apache2
     path: "${SYSTEM_ETC}/php.ini"
