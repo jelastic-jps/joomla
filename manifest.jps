@@ -1,28 +1,34 @@
-version: '0.2'
+version: 1.7
 type: install
 id: joomla
 name: Joomla
-logo: https://raw.githubusercontent.com/jelastic-jps/joomla/master/images/joomla.png
+logo: images/joomla.png
+
+baseUrl: https://raw.githubusercontent.com/jelastic-jps/joomla/master/
+
 categories:
 - apps/cms
 - apps/content-management
 homepage: http://www.joomla.org/
 description: Joomla is an award-winning content management system (CMS), which enables
   you to build Web sites and powerful online applications.
-engine: php7.3
+  
+mixins:
+- configs/vers.yaml
+  
 globals:
   DB_ADMIN_PASS: "${fn.password}"
   ADMIN_PASS: "${user.appPassword}"
+  APACHE_PATH: "/var/www/"
+  LOG_FILE: "/install_joomla.log"
+  ROOT_PATH: /var/www/webroot/ROOT/
 nodes:
 - cloudlets: 8
   nodeType: apache2
 - nodeType: mysql5
   cloudlets: 8
+  
 onInstall:
-- deploy:
-    archive: https://github.com/jelastic-jps/joomla/blob/master/dumps/joomla-3.9.5.zip?raw=true
-    name: Joomla-3.9.5.zip
-    context: ROOT
 - prepareSqlDatabase:
     nodeGroup: sqldb
     loginCredentials:
@@ -32,40 +38,38 @@ onInstall:
     newDatabaseUser:
       name: joomla
       password: "${globals.DB_ADMIN_PASS}"
-- restoreSqlDump:
-    nodeGroup: sqldb
-    databaseName: joomla
-    user: joomla
-    password: "${globals.DB_ADMIN_PASS}"
-    dump: https://raw.githubusercontent.com/jelastic-jps/joomla/master/dumps/joomla.sql
-- applySqlPatch:
-    nodeGroup: sqldb
-    databaseName: joomla
-    user: joomla
-    password: "${globals.DB_ADMIN_PASS}"
-    patch: UPDATE joomla.pby9p_users SET username='admin' WHERE username='jelastic';UPDATE joomla.pby9p_users SET email='${user.email}' WHERE username='admin';UPDATE joomla.pby9p_users SET password=MD5('${globals.ADMIN_PASS}') WHERE username='admin';
+- cmd [cp]: |-
+    rm -rf ${globals.ROOT_PATH}*
+    curl -fsSL "https://getcomposer.org/installer" -o ${globals.APACHE_PATH}/installer 2>&1 1>>${globals.APACHE_PATH}${globals.LOG_FILE} && php installer 2>&1 1>>${globals.APACHE_PATH}${globals.LOG_FILE}
+    composer global require joomlatools/console
+    export PATH="$PATH:$HOME/.config/composer/vendor/bin"
+    mysql -uroot -p${nodes.sqldb.password} -h${nodes.mysql5.address} -e "DROP database joomla"
+    joomla site:create Jelastic --www=${globals.ROOT_PATH} --use-webroot-dir --mysql-database=joomla --mysql-login='joomla:${globals.DB_ADMIN_PASS}' --mysql-host=${nodes.mysql5.address} --release=${globals.version_joomla}
 - replaceInFile:
-  - nodeType: apache2
-    path: "/var/www/webroot/ROOT/configuration.php"
-    replacements:
-    - pattern: "{DB_HOST}"
-      replacement: "${nodes.mysql5.address}"
-    - pattern: "{USER_EMAIL}"
-      replacement: "${user.email}"
-    - pattern: "{DB_USER}"
-      replacement: joomla
-    - pattern: "{DB_PASSWORD}"
-      replacement: "${globals.DB_ADMIN_PASS}"
-    - pattern: "{DB_NAME}"
-      replacement: joomla
   - nodeType: apache2
     path: "${SYSTEM_ETC}/php.ini"
     replacements:
     - pattern: ".*extension=mysql.so"
       replacement: extension=mysql.so
+  - nodeType: apache2
+    path: ${globals.ROOT_PATH}/configuration.php
+    replacements:
+    - pattern: public $debug = '1';
+      replacement: public $debug = '0';
+    - pattern: public $user = 'root';
+      replacement: public $user = 'joomla';
+    - pattern: public $password = '${nodes.sqldb.password}';
+      replacement: public $password = '${globals.DB_ADMIN_PASS}';
 - cmd [sqldb]: sed -i "s|\[mysqld\]|\[mysqld\]\ncharacter-set-server=utf8|g" /etc/my.cnf
   user: root
+- applySqlPatch:
+    nodeType: mysql5
+    user: joomla
+    password: ${globals.DB_ADMIN_PASS}
+    databaseName: joomla
+    patch: UPDATE joomla.j_users SET password=MD5('${globals.ADMIN_PASS}') WHERE username='admin';
 - restartNodes [apache2]
+
 success: |
   Below you will find your admin panel link, adminname and password.  
   Admin URL: [${env.protocol}://${env.domain}/administrator/](${env.protocol}://${env.domain}/administrator/)  
