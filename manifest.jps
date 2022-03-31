@@ -23,7 +23,7 @@ globals:
   LOG_FILE: "/install_joomla.log"
   ROOT_PATH: /var/www/webroot/ROOT/
 nodes:
-- cloudlets: 8
+- cloudlets: 16
   nodeType: apache2
 - nodeType: mysql5
   cloudlets: 8
@@ -39,11 +39,18 @@ onInstall:
       name: joomla
       password: "${globals.DB_ADMIN_PASS}"
 - cmd [cp]: |-
+    yum -y install npm
+  user: root
+- cmd [sqldb]: sed -i "s|\[mysqld\]|\[mysqld\]\ncharacter-set-server=utf8\nsql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES|g" /etc/my.cnf
+  user: root
+- restartNodes [sqldb]
+- cmd [cp]: |-
     rm -rf ${globals.ROOT_PATH}*
     curl -fsSL "https://getcomposer.org/installer" -o ${globals.APACHE_PATH}/installer 2>&1 1>>${globals.APACHE_PATH}${globals.LOG_FILE} && php installer 2>&1 1>>${globals.APACHE_PATH}${globals.LOG_FILE}
     composer global require joomlatools/console
     export PATH="$PATH:$HOME/.config/composer/vendor/bin"
     mysql -uroot -p${nodes.sqldb.password} -h${nodes.mysql5.address} -e "DROP database joomla"
+    export LD_LIBRARY_PATH=/usr/lib64;
     joomla site:create Jelastic --www=${globals.ROOT_PATH} --use-webroot-dir --mysql-database=joomla --mysql-login='joomla:${globals.DB_ADMIN_PASS}' --mysql-host=${nodes.mysql5.address} --release=${globals.version_joomla}
 - replaceInFile:
   - nodeType: apache2
@@ -60,8 +67,6 @@ onInstall:
       replacement: public $user = 'joomla';
     - pattern: public $password = '${nodes.sqldb.password}';
       replacement: public $password = '${globals.DB_ADMIN_PASS}';
-- cmd [sqldb]: sed -i "s|\[mysqld\]|\[mysqld\]\ncharacter-set-server=utf8|g" /etc/my.cnf
-  user: root
 - applySqlPatch:
     nodeType: mysql5
     user: joomla
