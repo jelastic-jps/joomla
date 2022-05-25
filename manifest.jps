@@ -28,16 +28,11 @@ nodes:
 - nodeType: mysql5
   cloudlets: 8
   
-onInstall:
-- prepareSqlDatabase:
-    nodeGroup: sqldb
-    loginCredentials:
-      user: root
-      password: "${nodes.sqldb.password}"
-    newDatabaseName: joomla
-    newDatabaseUser:
-      name: joomla
-      password: "${globals.DB_ADMIN_PASS}"
+onInstall:     
+- cmd[sqldb]: |-
+    MYSQL_PWD=${nodes.mysql5.password} mysql -uroot -e "CREATE DATABASE joomla;"
+    MYSQL_PWD=${nodes.mysql5.password} mysql -uroot -e "CREATE USER 'joomla'@'%' IDENTIFIED BY '${globals.DB_ADMIN_PASS}';"
+    MYSQL_PWD=${nodes.mysql5.password} mysql -uroot -e "GRANT ALL PRIVILEGES ON joomla.* To 'joomla'@'%' IDENTIFIED BY '${globals.DB_ADMIN_PASS}';"
 - cmd [cp]: |-
     yum -y install npm
   user: root
@@ -67,12 +62,7 @@ onInstall:
       replacement: public $user = 'joomla';
     - pattern: public $password = '${nodes.sqldb.password}';
       replacement: public $password = '${globals.DB_ADMIN_PASS}';
-- applySqlPatch:
-    nodeType: mysql5
-    user: joomla
-    password: ${globals.DB_ADMIN_PASS}
-    databaseName: joomla
-    patch: UPDATE joomla.j_users SET password=MD5('${globals.ADMIN_PASS}') WHERE username='admin';
+- cmd[sqldb]: MYSQL_PWD=${nodes.mysql5.password} mysql -uroot -e "UPDATE joomla.j_users SET password=MD5('${globals.ADMIN_PASS}') WHERE username='admin';"
 - restartNodes [apache2]
 
 success: |
