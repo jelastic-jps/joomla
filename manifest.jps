@@ -25,14 +25,14 @@ globals:
 nodes:
 - cloudlets: 16
   nodeType: apache2
-- nodeType: mysql5
+- nodeType: mysql8
   cloudlets: 8
   
 onInstall:     
 - cmd[sqldb]: |-
-    MYSQL_PWD=${nodes.mysql5.password} mysql -uroot -e "CREATE DATABASE joomla;"
-    MYSQL_PWD=${nodes.mysql5.password} mysql -uroot -e "CREATE USER 'joomla'@'%' IDENTIFIED BY '${globals.DB_ADMIN_PASS}';"
-    MYSQL_PWD=${nodes.mysql5.password} mysql -uroot -e "GRANT ALL PRIVILEGES ON joomla.* To 'joomla'@'%' IDENTIFIED BY '${globals.DB_ADMIN_PASS}';"
+    MYSQL_PWD=${nodes.mysql8.password} mysql -uroot -e "CREATE DATABASE joomla;"
+    MYSQL_PWD=${nodes.mysql8.password} mysql -uroot -e "CREATE USER 'joomla'@'%' IDENTIFIED BY '${globals.DB_ADMIN_PASS}';"
+    MYSQL_PWD=${nodes.mysql8.password} mysql -uroot -e "GRANT ALL PRIVILEGES ON joomla.* To 'joomla'@'%' WITH GRANT OPTION;"
 - cmd [cp]: |-
     yum -y install npm
   user: root
@@ -44,9 +44,9 @@ onInstall:
     curl -fsSL "https://getcomposer.org/installer" -o ${globals.APACHE_PATH}/installer 2>&1 1>>${globals.APACHE_PATH}${globals.LOG_FILE} && php installer 2>&1 1>>${globals.APACHE_PATH}${globals.LOG_FILE}
     composer global require joomlatools/console
     export PATH="$PATH:$HOME/.config/composer/vendor/bin"
-    mysql -uroot -p${nodes.sqldb.password} -h${nodes.mysql5.address} -e "DROP database joomla"
+    mysql -uroot -p${nodes.sqldb.password} -h${nodes.mysql8.address} -e "DROP database joomla"
     export LD_LIBRARY_PATH=/usr/lib64;
-    joomla site:create Jelastic --www=${globals.ROOT_PATH} --use-webroot-dir --mysql-database=joomla --mysql-login='joomla:${globals.DB_ADMIN_PASS}' --mysql-host=${nodes.mysql5.address} --release=${globals.version_joomla}
+    joomla site:create Jelastic --www=${globals.ROOT_PATH} --use-webroot-dir --mysql-database=joomla --mysql-login='joomla:${globals.DB_ADMIN_PASS}' --mysql-host=${nodes.mysql8.address} --release=${globals.version_joomla}
 - replaceInFile:
   - nodeType: apache2
     path: "${SYSTEM_ETC}/php.ini"
@@ -62,7 +62,7 @@ onInstall:
       replacement: public $user = 'joomla';
     - pattern: public $password = '${nodes.sqldb.password}';
       replacement: public $password = '${globals.DB_ADMIN_PASS}';
-- cmd[sqldb]: MYSQL_PWD=${nodes.mysql5.password} mysql -uroot -e "UPDATE joomla.j_users SET password=MD5('${globals.ADMIN_PASS}') WHERE username='admin';"
+- cmd[sqldb]: MYSQL_PWD=${nodes.mysql8.password} mysql -uroot -e "UPDATE joomla.j_users SET password=MD5('${globals.ADMIN_PASS}') WHERE username='admin';"
 - restartNodes [apache2]
 
 success: |
