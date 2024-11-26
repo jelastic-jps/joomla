@@ -1,36 +1,36 @@
-[![Joomla](../../raw/master/images/joomla.png)](../../../joomla)
-## Joomla
+<p align="center"> 
+<img src="images/joomla.png" alt="Joomla">
+</p>
 
-The JPS package deploys Joomla that initially contains 1 application server and 1 database container. The package provides vertical scalling per node and horizontal scaling for each layer out-of-the-box.
+# Joomla
 
-### Highlights
-This package is designed to deploy Joomla environment which enables to build Web sites and powerful online applications.
+The package deploys the Joomla CMS solution - an open-source and user-friendly content management system for building websites and powerful online applications.
 
-### Environment Topology
 
-![joomla-environment-topology](images/joomla-environment-topology.png)
+## Environment Topology
 
-### Specifics
+This package creates a dedicated Joomla environment which contains one application server and one database container, deploys and setups the Joomla application. Additionally, automatic vertical (per container) and horizontal scaling (for both layers) are configured out-of-the-box. The default software stacks utilized in the package are the following:
 
-Layer                |     Server    | Number of CTs <br/> by default | Cloudlets per CT <br/> (reserved/dynamic) | Options
--------------------- | --------------| :----------------------------: | :---------------------------------------: | :-----:
-AS                   | Apache 2 (MOD_PHP) |       1                        |           1 / 16                          | -
-DB                   |    MySQL      |       1                        |           1 / 16                           | -
+- Apache 2 PHP application server (PHP 8.3)
+- MySQL 8 database
+- Joomla 5.1.4
 
-* AS - Application server 
-* DB - Database 
-* CT - Container
+![Joomla environment topology](images/joomla-environment-topology.png)
 
-**Joomla Version**: 3.4.8<br/>
-**PHP Engine**: PHP 5.4.45<br/>
-**MySQL Database**: 5.7.12
 
-### Deployment
+## Deployment to Cloud
 
-In order to get this solution instantly deployed, click the "Get It Hosted Now" button, specify your email address within the widget, choose one of the [Jelastic Public Cloud providers](https://jelastic.cloud) and press Install.
+To get your Joomla solution, click the "**Deploy to Cloud**" button below, specify your email address within the widget, choose one of the [Virtuozzo Public Cloud Providers](https://www.virtuozzo.com/application-platform-partners/), and confirm by clicking **Install**.
 
-[![GET IT HOSTED](https://raw.githubusercontent.com/jelastic-jps/jpswiki/master/images/getithosted.png)](https://jelastic.com/install-application/?manifest=https%3A%2F%2Fgithub.com%2Fjelastic-jps%2Fjoomla%2Fraw%2Fmaster%2Fmanifest.jps)
+[![Deploy to Cloud](https://raw.githubusercontent.com/jelastic-jps/common/main/images/deploy-to-cloud.png)](https://www.virtuozzo.com/install/?manifest=https://raw.githubusercontent.com/jelastic-jps/joomla/refs/heads/master/manifest.jps)
 
-To deploy this package to Jelastic Private Cloud, import [this JPS manifest](../../raw/master/manifest.jps) within your dashboard ([detailed instruction](https://docs.jelastic.com/environment-export-import#import)).
+> If you already have a Virtuozzo Application Platform (VAP) account, you can deploy this solution from the [Marketplace](https://www.virtuozzo.com/application-platform-docs/marketplace/) or [import](https://www.virtuozzo.com/application-platform-docs/environment-import/) a manifest file from this repository.
 
-More information about Jelastic JPS package and about installation widget for your website can be found in the [Jelastic JPS Application Package](https://github.com/jelastic-jps/jpswiki/wiki/Jelastic-JPS-Application-Package) reference.
+
+## Installation Process
+
+In the opened installation window at the VAP dashboard, provide a preferred environment and display names, choose a region (if available), and confirm the installation.
+
+![Joomla deployment wizard](images/joomla-deployment-wizard.png)
+
+Your Joomla application will be automatically installed in a few minutes.
