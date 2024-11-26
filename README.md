@@ -9,7 +9,7 @@ The package deploys the Joomla CMS solution - an open-source and user-friendly c
 
 ## Environment Topology
 
-This package creates a dedicated Joomla environment which contains one application server and one database container, deploys and setups the Joomla application. Additionally, automatic vertical (per container) and horizontal scaling (for both layers) are configured out-of-the-box. The default software stacks utilized in the package are the following:
+This package creates a dedicated Joomla environment that contains one application server and one database container. It automatically deploys and sets the Joomla application. Additionally, automatic vertical (per container) and horizontal scaling are configured out of the box. The default software stacks utilized in the package are the following:
 
 - Apache 2 PHP application server (PHP 8.3)
 - MySQL 8 database
