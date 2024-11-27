@@ -70,4 +70,4 @@ success: |
   Admin URL: [${env.protocol}://${env.domain}/administrator/](${env.protocol}://${env.domain}/administrator/)  
   Admin name: admin  
   Password: ${globals.ADMIN_PASS}  
-  To add custom domain name for your Joomla installation follow the steps described in our [documentation](http://docs.jelastic.com/custom-domains)
+  To add custom domain name for your Joomla installation follow the steps described in our [documentation](https://www.virtuozzo.com/application-platform-docs/custom-domains/).
