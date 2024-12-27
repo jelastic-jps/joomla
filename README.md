@@ -15,8 +15,6 @@ This package creates a dedicated Joomla! environment that contains one applicati
 - MySQL 8 database
 - Joomla! 5.1.4
 
-![Joomla! environment topology](images/joomla-environment-topology.png)
-
 
 ## Deployment to Cloud
 
