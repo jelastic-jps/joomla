@@ -9,9 +9,8 @@ baseUrl: https://raw.githubusercontent.com/jelastic-jps/joomla/master/
 categories:
 - apps/cms
 - apps/content-management
-homepage: http://www.joomla.org/
-description: Joomla is an award-winning content management system (CMS), which enables
-  you to build Web sites and powerful online applications.
+homepage: https://www.joomla.org/
+description: Joomla! is an open-source content management system (CMS) for publishing web content. It offers a powerful yet user-friendly interface for building websites and online applications.
   
 mixins:
 - configs/vers.yaml
@@ -66,8 +65,10 @@ onInstall:
 - restartNodes [apache2]
 
 success: |
-  Below you will find your admin panel link, adminname and password.  
-  Admin URL: [${env.protocol}://${env.domain}/administrator/](${env.protocol}://${env.domain}/administrator/)  
-  Admin name: admin  
-  Password: ${globals.ADMIN_PASS}  
-  To add custom domain name for your Joomla installation follow the steps described in our [documentation](http://docs.jelastic.com/custom-domains)
+  Use the following credentials to access the Joomla! admin panel:
+  
+  **Admin panel URL:** [${env.protocol}://${env.domain}/administrator/](${env.protocol}://${env.domain}/administrator/)  
+  **Admin name:** admin  
+  **Admin password:** ${globals.ADMIN_PASS}  
+
+  To add a custom domain name for your Joomla! installation, follow the steps described in our [documentation](https://www.virtuozzo.com/application-platform-docs/custom-domains/).
