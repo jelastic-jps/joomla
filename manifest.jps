@@ -10,7 +10,7 @@ categories:
 - apps/cms
 - apps/content-management
 homepage: https://www.joomla.org/
-description: Joomla! is an open-source content management system (CMS) for publishing web content. It offers a powerful yet user-friendly interface for building websites and online applications.
+description: Joomla! is an open-source content management system (CMS) for publishing web content. It offers a powerful yet user-friendly interface for building websites and online applications.
   
 mixins:
 - configs/vers.yaml
@@ -21,6 +21,8 @@ globals:
   APACHE_PATH: "/var/www/"
   LOG_FILE: "/install_joomla.log"
   ROOT_PATH: /var/www/webroot/ROOT/
+  
+ssl: true
 nodes:
 - cloudlets: 16
   nodeType: apache2
