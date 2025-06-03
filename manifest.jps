@@ -4,7 +4,7 @@ id: joomla
 name: Joomla
 logo: images/joomla.png
 
-baseUrl: https://raw.githubusercontent.com/jelastic-jps/joomla/master/
+baseUrl: https://cdn.jsdelivr.net/gh/jelastic-jps/joomla@master/
 
 categories:
 - apps/cms
